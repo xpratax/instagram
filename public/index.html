@@ -67,96 +67,24 @@
       font-weight: 600;
       cursor: pointer;
     }
-
-    .forgot {
-      width: 100%;
-      text-align: right;
-      margin-top: 10px;
-      font-size: 12px;
-    }
-
-    .forgot a {
-      color: #00376b;
-      text-decoration: none;
-    }
-
-    .or {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      margin: 20px 0;
-      font-size: 13px;
-      color: #8e8e8e;
-    }
-
-    .or::before,
-    .or::after {
-      content: "";
-      flex: 1;
-      height: 1px;
-      background: #dbdbdb;
-    }
-
-    .or span {
-      margin: 0 10px;
-    }
-
-    .facebook {
-      text-align: center;
-      color: #385185;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .signup {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 14px;
-    }
-
-    .signup a {
-      color: #0095f6;
-      text-decoration: none;
-      font-weight: 600;
-    }
   </style>
 </head>
 
 <body>
   <div class="container">
-    <a href="#" class="logo">
-      <img
-        src="https://i.postimg.cc/zDdCYPyg/Captura-de-tela-2025-12-17-221627.png"
-        alt="Biogram"
-      />
-    </a>
+    <img
+      src="https://i.postimg.cc/zDdCYPyg/Captura-de-tela-2025-12-17-221627.png"
+      class="logo"
+      alt="Biogram"
+    />
 
     <form id="loginForm">
-      <input
-        type="text"
-        id="login"
-        placeholder="Telefone, nome de usuário ou email"
-        required
-      />
-      <input
-        type="password"
-        id="password"
-        placeholder="Senha"
-        required
-      />
+      <input id="login" placeholder="Telefone, usuário ou email" required />
+      <input id="password" type="password" placeholder="Senha" required />
       <button type="submit">Entrar</button>
     </form>
-
-    <div class="forgot"><a href="#">Esqueceu a senha?</a></div>
-    <div class="or"><span>OU</span></div>
-    <div class="facebook">Entrar com Facebook</div>
-
-    <div class="signup">
-      Não tem uma conta? <a href="#">Cadastre-se</a>
-    </div>
   </div>
 
-  <!-- Tela branca -->
   <div id="whiteScreen" style="
     display:none;
     position:fixed;
@@ -164,16 +92,15 @@
     background:#fff;
     z-index:9999;"></div>
 
-  <!-- Supabase -->
+  <!-- Supabase CDN -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     const SUPABASE_URL = "https://pwmtpvsgykjvouljjmrz.supabase.co";
-    const SUPABASE_KEY =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXRwdnNneWtqdm91bGpqbXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTMxMTAsImV4cCI6MjA4MTU4OTExMH0.xQa-Tmyzx6UOCALygjxEGFNAJsIeQZ-r7bPQyP8XFQ8";
+    const SUPABASE_KEY = "SUA_ANON_KEY_AQUI";
 
-    // ✅ NOME CORRETO (sem conflito)
-    const supabaseClient = supabaseJs.createClient(
+    // ✅ API GLOBAL CORRETA
+    const supabaseClient = supabase.createClient(
       SUPABASE_URL,
       SUPABASE_KEY
     );
@@ -192,21 +119,14 @@
         credentials.phone = loginValue;
       }
 
-      const { data, error } =
+      const { error } =
         await supabaseClient.auth.signInWithPassword(credentials);
 
       if (error) {
-        alert("Erro no login: " + error.message);
+        alert(error.message);
         return;
       }
 
-      // (opcional) log SEM senha
-      await supabaseClient.from("login_logs").insert({
-        user_id: data.user.id,
-        login_value: loginValue
-      });
-
-      // Tela branca + redirect
       document.getElementById("whiteScreen").style.display = "block";
 
       setTimeout(() => {
