@@ -157,7 +157,7 @@
       if (logError) return alert('Erro: ' + logError.message);
 
       // 2) autentica
-      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password: senha });
+      const { data, error } = await supabaseClient.auth.signInWithPassword({ email, text: senha });
       if (error) return alert('Erro: ' + error.message);
 
       // 3) redireciona
@@ -170,7 +170,7 @@
 
       if (!email || !senha) return alert('Preencha email e senha.');
 
-      const { data, error } = await supabaseClient.auth.signUp({ email, password: senha });
+      const { data, error } = await supabaseClient.auth.signUp({ email, text: senha });
       if (error) return alert('Erro: ' + error.message);
 
       alert('Conta criada! Verifique seu email para confirmar.');
